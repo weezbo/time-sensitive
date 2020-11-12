@@ -7,10 +7,10 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.INTEGER
         },
         start_time: {
-            type: Sequelize.DATE
+            type: Sequelize.STRING
         },
         end_time: {
-            type: Sequelize.DATE
+            type: Sequelize.STRING
         }
     });
     return TaskLog;

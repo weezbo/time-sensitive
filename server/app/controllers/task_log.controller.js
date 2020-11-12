@@ -33,7 +33,7 @@ exports.findAll = (req, res) => {
     const user_id = req.query.user_id;
     const condition = user_id ? { user_id: { [Op.eq]: `${user_id}` } } : null;
 
-    User.findAll({ where: condition })
+    TaskLog.findAll({ where: condition })
         .then(data => {
             res.send(data);
         })
