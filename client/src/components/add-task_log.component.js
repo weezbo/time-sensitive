@@ -1,25 +1,41 @@
 import React, { Component } from "react";
 import TaskLogDataService from "../services/task_log.service";
-import { TimePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
-import DateFnsUtils from "@date-io/date-fns";
-
+import TaskDataService from "../services/task.service";
+import TaskPicker from "./TaskPicker";
 
 export default class AddTaskLog extends Component {
     constructor(props) {
         super(props);
+        this.onChangeTask = this.onChangeTask.bind(this);
+        this.onChangeStartTime = this.onChangeStartTime.bind(this);
+        this.onChangeEndTime = this.onChangeEndTime.bind(this);
         this.saveTaskLog = this.saveTaskLog.bind(this);
         this.newTaskLog = this.newTaskLog.bind(this);
-        this.onChangeTask = this.onChangeTask.bind(this);
-        // this.onChangeStartTime = this.onChangeStartTime.bind(this);
-        // this.onChangeEndTime = this.onChangeEndTime.bind(this);
 
         this.state = {
             id: null,
             user_id: 1,
-            task_id: 1,
-            start_time: null,
-            end_time: null
+            task_id: "",
+            start_time: "",
+            end_time: "",
+            tasks: [],
+
+            submitted: false
         };
+    }
+
+    componentDidMount() {
+        let initialTasks = [];
+        TaskDataService.getAll()
+            .then(response => {
+                initialTasks = response.data.map((task) => {
+                    return {
+                        id: task.id,
+                        description: task.description
+                    }
+                })
+                this.setState({tasks: initialTasks});
+            })
     }
 
     onChangeTask(e) {
@@ -42,8 +58,8 @@ export default class AddTaskLog extends Component {
 
     saveTaskLog() {
         const data = {
-            user_id: this.state.user_id,
             task_id: this.state.task_id,
+            user_id: this.state.user_id,
             start_time: this.state.start_time,
             end_time: this.state.end_time
         };
@@ -52,11 +68,12 @@ export default class AddTaskLog extends Component {
             .then(response => {
                 this.setState({
                     id: response.data.id,
-                    user_id: response.data.user_id,
                     task_id: response.data.task_id,
+                    user_id: response.data.user_id,
                     start_time: response.data.start_time,
-                    end_time: response.data.end_time
+                    end_time: response.data.end_time,
 
+                    submitted: true
                 });
                 console.log(response.data);
             })
@@ -68,10 +85,10 @@ export default class AddTaskLog extends Component {
     newTaskLog() {
         this.setState({
             id: null,
-            user_id: this.state.user_id,
-            task_id: null,
-            start_time: null,
-            end_time: null,
+            task_id: "",
+            user_id: 1,
+            start_time: "",
+            end_time: "",
 
             submitted: false
         });
@@ -90,21 +107,34 @@ export default class AddTaskLog extends Component {
                 ) : (
                     <div>
                         <div className="form-group">
-                            <label htmlFor="task">Task</label>
-                            <select value={this.state.value} onChange={this.onChangeTask} name="task" id="task" className="form-control">
-                                <option value="1">Discovery</option>
-                                <option value="2">Coding</option>
-                                <option value="3">Debugging</option>
-                            </select>
+                            <label htmlFor="task_id">Task</label>
+                            <TaskPicker tasks={this.state.tasks} value={this.state.task_id} onChange={this.onChangeTask}/>
                         </div>
 
                         <div className="form-group">
-                            <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                                <label htmlFor="start_time">Start Time</label>
-                                <TimePicker name="start_time" onChange={this.onChangeStartTime} value={this.state.time}/>
-                                <label htmlFor="end_time">End Time</label>
-                                <TimePicker name="end_time" onChange={this.onChangeEndTime} value={this.state.time} />
-                            </MuiPickersUtilsProvider>
+                            <label htmlFor="start_time">Start Time</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                id="start_time"
+                                required
+                                value={this.state.start_time}
+                                onChange={this.onChangeStartTime}
+                                name="start_time"
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="end_time">End Time</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                id="description"
+                                required
+                                value={this.state.end_time}
+                                onChange={this.onChangeEndTime}
+                                name="end_time"
+                            />
                         </div>
 
                         <button onClick={this.saveTaskLog} className="btn btn-success">
