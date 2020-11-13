@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import TaskLogDataService from "../services/taskLog";
 import TaskDataService from "../services/task.service";
 import TaskPicker from "./TaskPicker";
+import AuthService from "../services/auth.service";
 
 export default class AddTaskLog extends Component {
     constructor(props) {
@@ -19,6 +20,7 @@ export default class AddTaskLog extends Component {
             start_time: "",
             end_time: "",
             tasks: [],
+            logged_in_user: null,
 
             submitted: false
         };
@@ -36,6 +38,14 @@ export default class AddTaskLog extends Component {
                 })
                 this.setState({tasks: initialTasks});
             })
+        const user = AuthService.getCurrentUser();
+        if(user) {
+            console.log(user)
+            this.setState({
+                user_id: user.id,
+                logged_in_user: user.id
+            })
+        }
     }
 
     onChangeTask(e) {
@@ -86,7 +96,7 @@ export default class AddTaskLog extends Component {
         this.setState({
             id: null,
             task_id: "",
-            user_id: 1,
+            user_id: this.state.logged_in_user,
             start_time: "",
             end_time: "",
 
@@ -96,6 +106,13 @@ export default class AddTaskLog extends Component {
 
     render() {
         return (
+            <div>
+            {!this.state.logged_in_user ? (
+                <div className = "login-please">
+                    <h2>Please login for access (link at top)</h2>
+                </div>
+            ) : (
+
             <div className="submit-form">
                 {this.state.submitted ? (
                     <div>
@@ -142,6 +159,8 @@ export default class AddTaskLog extends Component {
                         </button>
                     </div>
                 )}
+            </div>
+            )}
             </div>
         );
     }
