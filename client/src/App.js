@@ -3,8 +3,7 @@ import { Switch, Route, Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 
-import AddTaskLog from "./components/add-task_log.component";
-import TaskLog from "./components/task_log.component";
+import AddTaskLog from "./components/AddTaskLog.component";
 
 class App extends Component {
     render() {

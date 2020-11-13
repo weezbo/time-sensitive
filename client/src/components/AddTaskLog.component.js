@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import TaskLogDataService from "../services/task_log.service";
+import TaskLogDataService from "../services/taskLog";
 import TaskDataService from "../services/task.service";
 import TaskPicker from "./TaskPicker";
 
